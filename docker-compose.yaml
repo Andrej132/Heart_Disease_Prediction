@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+  train:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile_train
+    volumes:
+      - ./artifacts:/app/artifacts
+      - ./data:/app/data
+    depends_on: []
+    restart: "no"
+
+  evaluate:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile_evaluate
+    volumes:
+      - ./artifacts:/app/artifacts
+      - ./data:/app/data
+    depends_on:
+      - train
+    restart: "no"
+
+  mlflow:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile_mlflow
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./artifacts:/mlflow
+    restart: unless-stopped
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile_streamlit
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./artifacts:/app/artifacts
+    depends_on:
+      - evaluate
+    restart: unless-stopped
