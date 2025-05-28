@@ -2,7 +2,8 @@ import mlflow
 import os
 
 def setup_mlflow(experiment_name="HeartDiseasePrediction"):
-    mlflow.set_tracking_uri("http://127.0.0.1:5000")
+    tracking_uri = os.environ.get("MLFLOW_TRACKING_URI", "http://mlflow:5000")
+    mlflow.set_tracking_uri(tracking_uri)
     mlflow.set_experiment(experiment_name)
 
 def start_run(run_name="RandomForest_Run"):

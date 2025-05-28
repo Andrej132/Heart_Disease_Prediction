@@ -52,14 +52,12 @@ def main():
         "FastingBS": [fbs],
         "MaxHR": [thalach],
         "Oldpeak": [oldpeak],
-        "Sex": [sex_map[sex]],               # Original categories (string)
-        "ChestPainType": [cp_map[cp]],       # Original categories (string)
-        "RestingECG": [restecg_map[restecg]],# Original categories (string)
-        "ExerciseAngina": [exang_map[exang]],# Original categories (string)
-        "ST_Slope": [slope_map[slope]]                  # Numeric (int)
+        "Sex": [sex_map[sex]],
+        "ChestPainType": [cp_map[cp]],
+        "RestingECG": [restecg_map[restecg]],
+        "ExerciseAngina": [exang_map[exang]],
+        "ST_Slope": [slope_map[slope]]
     })
-
-    print(input_data)
 
     if st.button("Predict"):
         model = load_model()

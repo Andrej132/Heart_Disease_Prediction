@@ -3,10 +3,15 @@ FROM python:3.12-slim
 WORKDIR /app
 
 COPY requirements.txt .
+RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src/ src/
-COPY data/ data/
 COPY config.py config.py
+COPY data/ data/
+COPY logs/ logs/
+COPY artifacts/ artifacts/
+
+ENV PYTHONPATH=/app
 
 CMD ["python", "src/train.py"]

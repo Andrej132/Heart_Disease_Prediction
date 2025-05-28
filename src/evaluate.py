@@ -8,17 +8,23 @@ from mlflow_tracking import setup_mlflow, start_run
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
 from config import DATA_DIR, MODEL_DIR, IMAGES_DIR, LOG_DIR
 
-logging.basicConfig(filename=f"{LOG_DIR}/pipeline.log", level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    filename=f"{LOG_DIR}/pipeline.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 def evaluate_model():
-    setup_mlflow()
+    setup_mlflow(experiment_name="HeartDiseasePrediction")
+    print("Current experiment:", mlflow.get_experiment_by_name("HeartDiseasePrediction"))
     with start_run("RandomForest_Evaluation"):
         if not os.path.exists(IMAGES_DIR):
-            os.makedirs(IMAGES_DIR)
+            os.makedirs(IMAGES_DIR, exist_ok=True)
 
         test_path = os.path.join(DATA_DIR, "test.csv")
         logging.info(f"Loading test data from {test_path}")
+        if not os.path.exists(test_path):
+            raise FileNotFoundError(f"Test data not found at {test_path}")
         test_df = pd.read_csv(test_path)
         X_test = test_df.drop(columns=["HeartDisease"])
         y_test = test_df["HeartDisease"]
@@ -34,9 +40,10 @@ def evaluate_model():
         report_txt = classification_report(y_test, y_pred)
         logging.info("Classification report generated.")
 
-        with open(os.path.join(IMAGES_DIR, "classification_report.txt"), "w") as f:
+        report_txt_path = os.path.join(IMAGES_DIR, "classification_report.txt")
+        with open(report_txt_path, "w") as f:
             f.write(report_txt)
-        mlflow.log_artifact(os.path.join(IMAGES_DIR, "classification_report.txt"), artifact_path="eval")
+        mlflow.log_artifact(report_txt_path, artifact_path="eval")
 
         mlflow.log_metrics({
             "precision_0": report["0"]["precision"],

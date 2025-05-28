@@ -28,6 +28,7 @@ e2e-ML-project/
 │ ├── Dockerfile_evaluate 
 │ ├── Dockerfile_mlflow 
 │ └── Dockerfile_streamlit 
+├── mlruns/
 ├── config.py 
 ├── requirements.txt 
 └── docker-compose.yaml 

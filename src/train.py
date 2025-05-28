@@ -4,7 +4,7 @@ import joblib
 from sklearn.ensemble import RandomForestClassifier
 from config import DATA_DIR, LOG_DIR, MODEL_DIR
 from sklearn.model_selection import StratifiedKFold, cross_val_score
-from src.data_preprocessing import preprocess_data, load_data
+from data_preprocessing import preprocess_data, load_data
 import numpy as np
 import pandas as pd
 import mlflow

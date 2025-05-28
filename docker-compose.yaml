@@ -1,6 +1,16 @@
 version: "3.9"
 
 services:
+  mlflow:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile_mlflow
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/mlflow
+    restart: unless-stopped
+
   train:
     build:
       context: .
@@ -8,7 +18,11 @@ services:
     volumes:
       - ./artifacts:/app/artifacts
       - ./data:/app/data
-    depends_on: []
+      - ./logs:/app/logs
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    depends_on:
+      - mlflow
     restart: "no"
 
   evaluate:
@@ -18,19 +32,12 @@ services:
     volumes:
       - ./artifacts:/app/artifacts
       - ./data:/app/data
+      - ./logs:/app/logs
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
     depends_on:
       - train
     restart: "no"
-
-  mlflow:
-    build:
-      context: .
-      dockerfile: dockerfiles/Dockerfile_mlflow
-    ports:
-      - "5000:5000"
-    volumes:
-      - ./artifacts:/mlflow
-    restart: unless-stopped
 
   streamlit:
     build:
@@ -40,6 +47,9 @@ services:
       - "8501:8501"
     volumes:
       - ./artifacts:/app/artifacts
+      - ./logs:/app/logs
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
     depends_on:
       - evaluate
     restart: unless-stopped
